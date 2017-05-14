@@ -1,0 +1,46 @@
+[v-cloak]
+  display: none
+.calendar
+  .header
+    text-align: center
+    .title
+      font-size: 30px
+      padding: 0px 15px
+    select.select-year
+      width: 7em
+      display: inline
+    select.select-month
+      width: 6em
+      display: inline
+  .standard-holiday
+    color: #28a4c9
+  .legal-holiday
+    color: #d43f3a
+  .month
+    font-size: 20px
+    .week
+      .day
+        width: 100px
+        height: 100px
+        //vertical-align: middle
+        text-align: center
+        position: relative
+        &:hover
+          background-color: #eaeaea
+          .newTask
+            opacity: 1
+        .newTask
+          width: 30px
+          height: 30px
+          -webkit-border-radius: 50%
+          -moz-border-radius: 50%
+          border-radius: 50%
+          color: #ffffff
+          background-color: #d43f3a
+          position: absolute
+          font-size: 22px
+          right: 10px
+          bottom: 5px
+          opacity: 0
+
+

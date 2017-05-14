@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>compass-calendar</title>
+    <link href="/css/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/vendor/bootstrap/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/css/vendor/font-awesome/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/calendar.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="calendar" id="calendar" v-cloak="v-cloak">
+      <div class="header">
+        <div class="title">{{calendar.year}}年{{calendar.month + 1}}月</div>
+        <button class="btn" @click="prevMonth">Prev</button>
+        <select class="form-control select-year" v-model="calendar.year" @change="selectMonth">
+          <option v-for="year in years" :value="year">{{year}} 年</option>
+        </select>
+        <select class="form-control select-month" v-model="calendar.month" @change="selectMonth">
+          <option v-for="month in months" :value="month - 1">{{month}} 月</option>
+        </select>
+        <button class="btn" @click="nextMonth">Next</button>
+      </div>
+      <div class="month">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th class="text-center" v-for="dayOfWeek in dayOfWeeks" :class="{'standard-holiday' : isStandardHoliday(dayOfWeek), 'legal-holiday' : isLegalHoliday(dayOfWeek)}">{{dayOfWeek.name}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="week" v-for="week in calendar.weeks">
+              <td class="day" v-for="day in week.days" :class="{'standard-holiday' : isStandardHoliday(day.dayOfWeek), 'legal-holiday' : isLegalHoliday(day.dayOfWeek)}">
+                <div>{{day.date.date()}}</div>
+                <ul class="list-inline">
+                  <li class="fa" v-for="task in day.tasks" data-toggle="tooltip" data-placement="bottom" v-bind:data-original-title="task.title" :class="{'fa-square-o' : !task.finished, 'fa-check': task.finished}" @click="showTask(task)"></li>
+                </ul>
+                <div class="newTask">
+                  <div class="fa fa-plus" @click="showNewTask(day.date)"></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal fade" id="new-task-modal" tabindex="-1" role="dialog" aria-labelledby="new-task-modal-label">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="new-task-modal-label">{{newTask.year}}年{{newTask.month + 1}}月{{newTask.day}}日にタスクを追加する</h4>
+            </div>
+            <div class="modal-body">
+              <input class="form-control" v-model="newTask.title">
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" @click="createTask">追加</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="task-modal" tabindex="-1" role="dialog" aria-labelledby="task-modal-label">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="task-modal-label">{{selectTask.year}}年{{selectTask.month + 1}}月{{selectTask.day}}日のタスク</h4>
+            </div>
+            <div class="modal-body">
+              <input class="form-control" v-model="selectTask.title" reeadonly="readonly">
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" @click="completedTask">完了</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="/js/vendor/jquery/jquery-3.2.1.min.js" type="text/javascript"></script>
+  <script src="/js/vendor/bootstrap/bootstrap.min.js" type="text/javascript"></script>
+  <script src="/js/vendor/moment/moment.min.js" type="text/javascript"></script>
+  <script src="/js/vendor/vue/vue.min.js" type="text/javascript"></script>
+  <script src="https://apis.google.com/js/client.js?onload=handleClientLoad" type="text/javascript"></script>
+  <script src="/js/calendar.js" type="text/javascript"></script>
+</html>

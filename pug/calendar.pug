@@ -1,0 +1,71 @@
+doctype html
+html(lang="ja")
+    head
+        meta(charset="UTF-8")
+        title compass-calendar
+        link(href="/css/vendor/bootstrap/bootstrap.min.css", rel="stylesheet")
+        link(href="/css/vendor/bootstrap/bootstrap-theme.min.css", rel="stylesheet")
+        link(href="/css/vendor/font-awesome/font-awesome.min.css", rel="stylesheet")
+        link(href="/css/calendar.css", rel="stylesheet")
+    body
+        #calendar.calendar(v-cloak="v-cloak")
+            .header
+                .title {{calendar.year}}年{{calendar.month + 1}}月
+                button.btn(@click="prevMonth") Prev
+                select.form-control.select-year(v-model="calendar.year", @change="selectMonth")
+                    option(v-for="year in years", :value="year") {{year}} 年
+                select.form-control.select-month(v-model="calendar.month", @change="selectMonth")
+                    option(v-for="month in months", :value="month - 1") {{month}} 月
+                button.btn(@click="nextMonth") Next
+            .month
+                table.table.table-sm
+                    thead
+                        tr
+                            th.text-center(
+                                v-for="dayOfWeek in dayOfWeeks",
+                                :class="{'standard-holiday' : isStandardHoliday(dayOfWeek), 'legal-holiday' : isLegalHoliday(dayOfWeek)}") {{dayOfWeek.name}}
+                    tbody
+                        tr.week(v-for="week in calendar.weeks")
+                            td.day(
+                                v-for="day in week.days",
+                                :class="{'standard-holiday' : isStandardHoliday(day.dayOfWeek), 'legal-holiday' : isLegalHoliday(day.dayOfWeek)}")
+                                div {{day.date.date()}}
+                                ul.list-inline
+                                    li.fa(
+                                        v-for="task in day.tasks",
+                                        data-toggle="tooltip",
+                                        data-placement="bottom",
+                                        v-bind:data-original-title="task.title",
+                                        :class="{'fa-square-o' : !task.finished, 'fa-check': task.finished}",
+                                        @click="showTask(task)")
+                                .newTask
+                                    .fa.fa-plus(@click="showNewTask(day.date)")
+
+            #new-task-modal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="new-task-modal-label")
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            button.close(type="button", data-dismiss="modal", aria-label="Close")
+                                span(aria-hidden="true") &times;
+                            h4#new-task-modal-label.modal-title {{newTask.year}}年{{newTask.month + 1}}月{{newTask.day}}日にタスクを追加する
+                        .modal-body
+                            input.form-control(v-model="newTask.title")
+                        .modal-footer
+                            button.btn.btn-primary(@click="createTask") 追加
+            #task-modal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="task-modal-label")
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            button.close(type="button", data-dismiss="modal", aria-label="Close")
+                                span(aria-hidden="true") &times;
+                            h4#task-modal-label.modal-title {{selectTask.year}}年{{selectTask.month + 1}}月{{selectTask.day}}日のタスク
+                        .modal-body
+                            input.form-control(v-model="selectTask.title", reeadonly="readonly")
+                        .modal-footer
+                            button.btn.btn-primary(@click="completedTask") 完了
+    script(src="/js/vendor/jquery/jquery-3.2.1.min.js", type="text/javascript")
+    script(src="/js/vendor/bootstrap/bootstrap.min.js", type="text/javascript")
+    script(src="/js/vendor/moment/moment.min.js", type="text/javascript")
+    script(src="/js/vendor/vue/vue.min.js", type="text/javascript")
+    script(src="https://apis.google.com/js/client.js?onload=handleClientLoad", type="text/javascript")
+    script(src="/js/calendar.js", type="text/javascript")
